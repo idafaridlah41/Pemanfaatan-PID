@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Hub Digitalisasi Pembelajaran SMP 2025/2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        slatebg: '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #059669;
+            color: #059669;
+            font-weight: 700;
+            background-color: #f0fdf4;
+        }
+        .step-card.active {
+            border-color: #059669;
+            background-color: #f0fdf4;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.1), 0 2px 4px -1px rgba(5, 150, 105, 0.06);
+        }
+        .lms-card.active {
+            border-color: #059669;
+            background-color: #f0fdf4;
+            box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.15);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<!-- Chosen Palette: Warm & Calm Neutral (Slate background #f8fafc, White cards, Deep Emerald/Teal accents #059669, Amber & Cyan secondary highlights) -->
+<!-- Application Structure Plan:
+     1. Header & Overview Stats: Menampilkan ringkasan metrik utama program (30k+ target guru, 9 materi, 4 tier kurikulum, ekosistem Smart Classroom).
+     2. Navigation Tabs Interaktif: Mengelompokkan 9 materi ke dalam 6 zona tematis:
+        - Zona 1: Spesifikasi Hardware & Maintenance (Materi 1 & 2)
+        - Zona 2: Alur 8 Langkah Pengelolaan Sarpras (Materi 3)
+        - Zona 3: Transformasi Pedagogi TPACK & AI Prompter (Materi 4, 5, 6)
+        - Zona 4: Praktik LMS Hub (Google Classroom, Moodle/MooDIY, Canva LMS) (Materi 7 & 8)
+        - Zona 5: Cascade Training & LMS PASTI (Materi 9)
+        - Zona 6: Master Action Plan & Checklist Guru (Benang Merah & Takeaways)
+     3. Komponen Interaktif Kunci:
+        - Interactive Specs Switcher untuk perangkat keras.
+        - Step-by-Step Interactive Stepper untuk 8 Langkah Pengelolaan.
+        - Generator Prompt AI Interaktif untuk guru (Persona + Tugas + Format + Konteks).
+        - Dynamic LMS Platform Switcher: Memilih platform LMS (Google Classroom, Moodle, Canva) merubah alur praktik & snippet embed secara langsung.
+        - Chart.js Visualisasi: Target Skalabilitas Cascade Training & Distribusi Kurikulum 4-Tier.
+        - Checklist Aksi Mandiri yang menghitung persentase kesiapan implementasi sekolah.
+-->
+<!-- Visualization & Content Choices:
+     1. Target Skalabilitas Training -> Interactive Bar Chart (Chart.js) -> Memvisualisasikan eskalasi peserta ToT Level 1 ke Bimtek Level 2 (30.840 Guru).
+     2. Kurikulum 4-Tier -> Interactive Doughnut Chart (Chart.js) -> Menunjukkan proporsi materi pelatihan dari fondasi hingga tata kelola.
+     3. Spesifikasi Perangkat -> Interactive Cards / Tabs -> Memudahkan perbandingan specs IFP, Laptop, Starlink, HDD tanpa teks menumpuk.
+     4. Alur 8 Langkah -> Dynamic Stepper Component -> Menguraikan proses manajemen sarpras langkah demi langkah.
+     5. Dynamic LMS Platform Selector -> Interactive Cards & Switcher JS -> Memungkinkan guru mengklik & menjelajahi alur praktik Google Classroom, MooDIY, dan Canva LMS.
+     6. Prompt AI Generator -> Form Simulator JS -> Memungkinkan guru langsung mencoba merangkai prompt sesuai standar Materi 6.
+     7. NO SVG / NO MERMAID: Menggunakan ikon Unicode standar (🖥️, ⚙️, 📚, 🤖, 📊, 🚀, ✅) & Canvas Chart.js.
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<body class="bg-slatebg text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header & Hero Section -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-xl shadow">
+                    🎓
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Hub Digitalisasi Pembelajaran SMP</h1>
+                    <p class="text-xs text-slate-500">Panduan Workshop & Implementasi Smart Classroom 2025/2026</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+                <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200">
+                    📡 Target: 30.840 Guru & Admin
+                </span>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-200">
+                    🖥️ IFP 75" & Starlink V4
+                </span>
+                <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-200">
+                    🚀 LMS PASTI Ready
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation Bar Tabs -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100">
+            <nav class="flex space-x-1 sm:space-x-4 overflow-x-auto custom-scrollbar text-xs sm:text-sm font-medium py-1" id="mainNav">
+                <button onclick="switchTab('hardware')" id="tab-hardware" class="tab-btn active px-3 py-2 rounded-t-md whitespace-nowrap transition-colors">
+                    🖥️ Hardware & Maintenance
+                </button>
+                <button onclick="switchTab('management')" id="tab-management" class="tab-btn px-3 py-2 rounded-t-md whitespace-nowrap text-slate-600 hover:text-slate-900 transition-colors">
+                    📋 8 Langkah Tata Kelola
+                </button>
+                <button onclick="switchTab('pedagogy')" id="tab-pedagogy" class="tab-btn px-3 py-2 rounded-t-md whitespace-nowrap text-slate-600 hover:text-slate-900 transition-colors">
+                    💡 TPACK, MPI & AI Assistant
+                </button>
+                <button onclick="switchTab('lms')" id="tab-lms" class="tab-btn px-3 py-2 rounded-t-md whitespace-nowrap text-slate-600 hover:text-slate-900 transition-colors">
+                    💻 LMS & Praktik Modul
+                </button>
+                <button onclick="switchTab('cascade')" id="tab-cascade" class="tab-btn px-3 py-2 rounded-t-md whitespace-nowrap text-slate-600 hover:text-slate-900 transition-colors">
+                    🚀 Cascade Training & PASTI
+                </button>
+                <button onclick="switchTab('action')" id="tab-action" class="tab-btn px-3 py-2 rounded-t-md whitespace-nowrap text-slate-600 hover:text-slate-900 transition-colors">
+                    ✅ Action Plan & Checklist
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: HARDWARE & MAINTENANCE -->
+        <section id="sec-hardware" class="space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>🖥️</span> Spesifikasi Ekosistem Peralatan & Manajemen Pemeliharaan
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Bagian ini menguraikan rincian teknis dari paket bantuan digitalisasi Kemendikdasmen 2025/2026 (Materi 1) serta protokol perawatan preventif dan troubleshooting fisik/siber (Materi 2). Gunakan tab di bawah untuk mengeksplorasi spesifikasi perangkat dan prosedur pemeliharaan.
+                </p>
+            </div>
+
+            <!-- Hardware Spec Switcher Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Device Selector -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilih Perangkat Bantuan</h3>
+                    <div class="space-y-2" id="deviceBtnList">
+                        <button onclick="showDevice('ifp')" id="dev-ifp" class="w-full text-left p-3 rounded-lg border border-brand-500 bg-brand-50 text-slate-900 font-semibold flex items-center justify-between transition">
+                            <span>📱 Interactive Flat Panel (IFP)</span>
+                            <span class="text-xs text-brand-700 bg-brand-100 px-2 py-0.5 rounded">Hisense 75"</span>
+                        </button>
+                        <button onclick="showDevice('laptop')" id="dev-laptop" class="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-white text-slate-700 font-semibold flex items-center justify-between transition">
+                            <span>💻 Laptop Pengajar</span>
+                            <span class="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Core i5 / Ryzen 5</span>
+                        </button>
+                        <button onclick="showDevice('starlink')" id="dev-starlink" class="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-white text-slate-700 font-semibold flex items-center justify-between transition">
+                            <span>📡 Internet Satelit</span>
+                            <span class="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Starlink V4 Gen 3</span>
+                        </button>
+                        <button onclick="showDevice('storage')" id="dev-storage" class="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-white text-slate-700 font-semibold flex items-center justify-between transition">
+                            <span>💾 Penyimpanan Eksternal</span>
+                            <span class="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded">HDD 500 GB</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Device Detail View -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between" id="deviceDetailBox">
+                    <!-- Dynamic JS content injected here -->
+                </div>
+            </div>
+
+            <!-- Maintenance & Troubleshooting Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 4 Pillars of Maintenance -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                        <span>🛠️</span> 4 Pendekatan Pemeliharaan Perangkat
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-slate-50 rounded-lg border-l-4 border-emerald-500">
+                            <span class="font-bold text-slate-900 block">1. Preventive Maintenance (Pencegahan)</span>
+                            <span class="text-xs text-slate-600">Pembersihan berkala layar IFP dengan microfiber khusus (tanpa alkohol/amonia cair), pengecekan ventilasi & kelayakan grounding listrik.</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border-l-4 border-blue-500">
+                            <span class="font-bold text-slate-900 block">2. Corrective Maintenance (Perbaikan)</span>
+                            <span class="text-xs text-slate-600">Penanganan kendala langsung saat terjadi masalah operasional, reset aplikasi hang, atau klaim garansi *on-site*.</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border-l-4 border-amber-500">
+                            <span class="font-bold text-slate-900 block">3. Predictive Maintenance (Analisis Gejala)</span>
+                            <span class="text-xs text-slate-600">Menganalisis gejala penurunan performa seperti suhu perangkat meningkat cepat atau penurunan respons sentuhan sebelum kerusakan parah.</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border-l-4 border-purple-500">
+                            <span class="font-bold text-slate-900 block">4. CMMS (Digitalisasi Perawatan)</span>
+                            <span class="text-xs text-slate-600">Pencatatan riwayat pemeliharaan, jadwal servis, dan insiden troubleshooting secara terdigitalisasi dalam logbook sekolah.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fast Troubleshooting & Security -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                        <span>⚡</span> Panduan Cepat Troubleshooting & Keamanan
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                            <span class="font-semibold text-amber-900 block">Layar Ghost Touch / Tidak Merespons:</span>
+                            <p class="text-xs text-amber-800 mt-1">Bersihkan debu/kelembapan pada permukaan layar, lakukan restart via *side button*, bersihkan cache sistem, atau lakukan *Factory Reset* (Setelan > Sistem > Opsi Reset).</p>
+                        </div>
+                        <div class="p-3 bg-red-50 rounded-lg border border-red-200">
+                            <span class="font-semibold text-red-900 block">Aplikasi Hang & Memori Penuh:</span>
+                            <p class="text-xs text-red-800 mt-1">Tutup aplikasi latar belakang via task manager. Dilarang mematikan IFP secara paksa dari sakelar utama secara mendadak!</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg border border-slate-200">
+                            <span class="font-semibold text-slate-900 block">🔒 Pengamanan Fisik & Siber:</span>
+                            <ul class="text-xs text-slate-600 list-disc list-inside mt-1 space-y-1">
+                                <li>Ruangan terkunci berteralis, terpasang CCTV & *security lock* IFP.</li>
+                                <li>Logout seluruh akun personal pengajar setelah KBM. Sembunyikan notifikasi nilai/privasi saat *screen sharing*.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: MANAGEMENT (8 LANGKAH) -->
+        <section id="sec-management" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>📋</span> Kerangka Manajerial: 8 Langkah Pengelolaan Digitalisasi
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Berdasarkan Materi 3, Kepala Sekolah dan Tim Sarpras wajib menjalankan 8 langkah tata kelola terstruktur agar bantuan dapat dimanfaatkan secara berkesinambungan, transparan, dan akuntabel. Klik setiap langkah di bawah untuk melihat rincian aksi operasionalnya.
+                </p>
+            </div>
+
+            <!-- Stepper Container -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <!-- Step Buttons Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-6" id="stepButtonsContainer">
+                    <!-- Dynamic Step Buttons Injected Here -->
+                </div>
+
+                <!-- Active Step Content Area -->
+                <div id="stepDetailContent" class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                    <!-- Dynamic Detail Injected Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PEDAGOGY, MPI & AI ASSISTANT -->
+        <section id="sec-pedagogy" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>💡</span> Framework TPACK, Platform Ruang Murid & Asistensi AI
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Integrasi teknologi tidak sekadar menghadirkan perangkat keras, melainkan mentransformasi pendekatan mengajar (*Deep Learning*) melalui integrasi TPACK (Materi 4), pemanfaatan Platform Ruang Murid (Materi 5), dan akselerasi pembuatan bahan ajar menggunakan Generative AI (Materi 6).
+                </p>
+            </div>
+
+            <!-- Deep Learning & TPACK Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="text-emerald-600 font-bold text-sm flex items-center gap-2">
+                        <span>🧠</span> Pembelajaran Mendalam (Deep Learning)
+                    </div>
+                    <p class="text-xs text-slate-600">Menciptakan ekosistem belajar yang holistik dengan 3 pilar suasana kelas:</p>
+                    <ul class="text-xs text-slate-700 space-y-2">
+                        <li class="bg-emerald-50 p-2 rounded border border-emerald-100"><strong>Mindful (Berkesadaran):</strong> Siswa paham alasan dan tujuan belajarnya.</li>
+                        <li class="bg-blue-50 p-2 rounded border border-blue-100"><strong>Meaningful (Bermakna):</strong> Menghubungkan materi dengan realita kehidupan nyata.</li>
+                        <li class="bg-amber-50 p-2 rounded border border-amber-100"><strong>Joyful (Menggembirakan):</strong> Eksplorasi interaktif yang memicu kegembiraan belajar.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="text-blue-600 font-bold text-sm flex items-center gap-2">
+                        <span>⚙️</span> Adopsi TPACK Berjenjang
+                    </div>
+                    <p class="text-xs text-slate-600">Tingkat kematangan guru dalam mengintegrasikan Teknologi, Pedagogi, dan Konten:</p>
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center p-1.5 bg-slate-100 rounded">
+                            <span class="font-semibold">1. Accepting</span>
+                            <span class="text-slate-500">Mencoba fitur dasar</span>
+                        </div>
+                        <div class="flex justify-between items-center p-1.5 bg-slate-100 rounded">
+                            <span class="font-semibold">2. Adapting</span>
+                            <span class="text-slate-500">Menyesuaikan media</span>
+                        </div>
+                        <div class="flex justify-between items-center p-1.5 bg-slate-100 rounded">
+                            <span class="font-semibold">3. Exploring</span>
+                            <span class="text-slate-500">Eksplorasi metode baru</span>
+                        </div>
+                        <div class="flex justify-between items-center p-1.5 bg-brand-100 text-brand-800 font-bold rounded">
+                            <span>4. Advancing</span>
+                            <span>Menciptakan inovasi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="text-purple-600 font-bold text-sm flex items-center gap-2">
+                        <span>📱</span> Ruang Murid & Rumah Pendidikan
+                    </div>
+                    <p class="text-xs text-slate-600">Ekosistem digital resmi Kemendikdasmen di <code class="text-xs bg-slate-100 px-1 py-0.5 rounded">rumah.pendidikan.go.id</code>:</p>
+                    <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside">
+                        <li><strong>1500+ Content Library:</strong> Video, Teks, & Gim Edukasi.</li>
+                        <li><strong>Lab Maya:</strong> Praktikum virtual interaktif sains/matematika.</li>
+                        <li><strong>BUDI:</strong> Buku digital, audiobook, & videobook literasi.</li>
+                        <li><strong>SIBI:</strong> Katalog digital buku Kurikulum Merdeka.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- AI Prompt Generator Simulator -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                        <span>🤖</span> Interactive Prompt Engineering Simulator (Materi 6)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                        AI Generatif bertindak sebagai asisten pengajar. Rancang instruksi yang tepat menggunakan 4 elemen kunci: <strong>Persona + Tugas + Format + Konteks</strong>.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">1. Persona AI</label>
+                        <select id="promptPersona" class="w-full text-xs p-2 rounded border border-slate-300 bg-slate-50">
+                            <option value="Bertindaklah sebagai Pakar Kurikulum Merdeka SMP">Pakar Kurikulum SMP</option>
+                            <option value="Bertindaklah sebagai Guru IPA Terampil & Kreatif">Guru IPA Kreatif</option>
+                            <option value="Bertindaklah sebagai Desain Instruksional Media Interaktif">Desainer Media Pembelajaran</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">2. Tugas Spesifik</label>
+                        <select id="promptTask" class="w-full text-xs p-2 rounded border border-slate-300 bg-slate-50">
+                            <option value="buatkan 3 skenario studi kasus interaktif tentang Perubahan Iklim">Skenario Studi Kasus</option>
+                            <option value="susunlah 5 soal HOTS bertema Tata Surya dilengkapi pembahasan">Soal HOTS + Pembahasan</option>
+                            <option value="rancanglah alur modul apersepsi menggembirakan untuk kelas 7">Alur Apersepsi Class</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">3. Format Output</label>
+                        <select id="promptFormat" class="w-full text-xs p-2 rounded border border-slate-300 bg-slate-50">
+                            <option value="tampilkan dalam bentuk tabel rapi dengan kolom Aktivitas, Durasi, dan Pertanyaan Pemicu">Tabel Rapi</option>
+                            <option value="sajikan dalam format poin-poin singkat siap di-copy ke slide Canva">Poin Slide Canva</option>
+                            <option value="formatkan sebagai draf kode HTML sederhana untuk LMS Moodle">Kode HTML LMS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">4. Konteks Siswa</label>
+                        <select id="promptContext" class="w-full text-xs p-2 rounded border border-slate-300 bg-slate-50">
+                            <option value="untuk siswa SMP kelas 7 yang belajar menggunakan layar interaktif PID Hisense di wilayah dengan akses internet terbatas.">Siswa SMP - IFP Hisense</option>
+                            <option value="untuk kelas 8 heterogen dengan gaya belajar visual dan kinesterik.">Kelas 8 Visual-Kinestetik</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs space-y-2 relative font-mono">
+                    <div class="flex justify-between items-center text-slate-400 text-[10px] uppercase font-sans">
+                        <span>Hasil Prompt Efektif (Siap Dimasukkan ke ChatGPT / Claude / Canva AI):</span>
+                        <button onclick="copyGeneratedPrompt()" class="bg-brand-600 hover:bg-brand-700 text-white px-2 py-1 rounded text-[10px] font-sans transition">
+                            📋 Salin Prompt
+                        </button>
+                    </div>
+                    <p id="promptOutput" class="leading-relaxed text-emerald-300">
+                        <!-- Dynamic prompt generated here -->
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: LMS & PRAKTIK MODUL -->
+        <section id="sec-lms" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>💻</span> LMS Hub & Panduan Praktik Platform Digital
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    LMS berfungsi sebagai *hub* orchestrasi digital kelas (Materi 7 & 8). Klik salah satu kartu platform LMS di bawah ini untuk mempelajari alur penggunaan, konfigurasi mandiri, serta metode *embed* media pembelajaran interaktif.
+                </p>
+            </div>
+
+            <!-- Platform LMS Comparison Selector Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lmsSelectorGrid">
+                <!-- Google Classroom Button -->
+                <button onclick="selectLmsPlatform('gclass')" id="lmsBtn-gclass" class="lms-card cursor-pointer text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-brand-500 transition shadow-sm space-y-2 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <span>🟩</span> Google Classroom
+                        </h3>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Ekosistem Google</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Terintegrasi penuh dengan Akun Belajar.id & Google Workspace for Education. Sangat mudah untuk pengelolaan tugas dasar & pengumuman cepat.</p>
+                </button>
+
+                <!-- Moodle / MooDIY Cloud Button -->
+                <button onclick="selectLmsPlatform('moodiy')" id="lmsBtn-moodiy" class="lms-card active cursor-pointer text-left p-4 rounded-xl border-2 border-brand-500 bg-brand-50/20 shadow-sm space-y-2 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <span>🟧</span> Moodle / MooDIY Cloud
+                        </h3>
+                        <span class="text-[10px] bg-brand-600 text-white font-bold px-2 py-0.5 rounded">Fokus Praktik Utama</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Open-source, kaya fitur penilaian, modul kuis adaptif, serta mendukung embed HTML Canva & PDF Google Drive secara mulus.</p>
+                </button>
+
+                <!-- Canva LMS Button -->
+                <button onclick="selectLmsPlatform('canva')" id="lmsBtn-canva" class="lms-card cursor-pointer text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-brand-500 transition shadow-sm space-y-2 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <span>🟦</span> Canva LMS & Eskooly
+                        </h3>
+                        <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">Visual & Desain</span>
+                    </div>
+                    <p class="text-xs text-slate-600">Manajemen kelas berbasis visual kaya estetika. Terhubung langsung dengan fitur pembuatan materi presentasi & LKPD interaktif.</p>
+                </button>
+            </div>
+
+            <!-- Dynamic Active LMS Practice Workflow & Details Container -->
+            <div id="lmsDetailContainer" class="space-y-6">
+                <!-- Injected via JavaScript based on selected platform -->
+            </div>
+        </section>
+
+        <!-- TAB 5: CASCADE TRAINING & PASTI -->
+        <section id="sec-cascade" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>🚀</span> Cascade Training & Operasional LMS PASTI
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Strategi pengimbasan berjenjang (*Cascade Training*) memastikan keberlanjutan pemanfaatan teknologi di seluruh Indonesia (Materi 9). Pelatihan dipantau secara terpusat melalui platform **LMS PASTI Kemendikdasmen**.
+                </p>
+            </div>
+
+            <!-- Charts & Visual Matrix -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Chart Container 1: Training Reach -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span>📊</span> Skalabilitas Target Pengimbasan Berjenjang
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="cascadeChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 text-center">Eskalasi peserta dari Narasumber Nasional (ToT) ke Bimtek Daerah.</p>
+                </div>
+
+                <!-- Chart Container 2: Curriculum Tier -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <span>📚</span> Proporsi Kurikulum Pelatihan 4-Tier
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="tierChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 text-center">Komposisi materi pelatihan dari dasar hingga eksekusi tata kelola.</p>
+                </div>
+            </div>
+
+            <!-- LMS PASTI Operational Details -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                    <span>🔑</span> Panduan Akses Portal LMS PASTI
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200 space-y-2">
+                        <div class="font-bold text-emerald-900 text-sm">1. Portal Resmi & Akun</div>
+                        <p class="text-emerald-800">Akses: <code class="bg-white px-1 py-0.5 rounded text-emerald-900 border">pasti-ditsmp.kemendikdasmen.go.id</code></p>
+                        <p class="text-emerald-800">Format Akun Standar: Username & Password menggunakan kode <strong>NPSN-xx</strong> (Contoh: <code>20107711-01</code>).</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-2">
+                        <div class="font-bold text-blue-900 text-sm">2. Enrolment & Kode Pengajar</div>
+                        <p class="text-blue-800">Saat mendaftar kursus pengimbasan, masukkan Enrolment Key resmi:</p>
+                        <p class="text-center bg-white py-1 rounded font-mono font-bold text-blue-900 border border-blue-300">digital2026</p>
+                        <p class="text-blue-800">Masukkan Kode Pengajar (Username pengimbas daerah Anda).</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-lg border border-amber-200 space-y-2">
+                        <div class="font-bold text-amber-900 text-sm">3. Validasi Profil & Sertifikat</div>
+                        <p class="text-amber-800">Wajib memperbarui nama lengkap beserta gelar dan nama sekolah sesuai data Dapodik agar penerbitan sertifikat resmi tidak terkendala.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: ACTION PLAN & CHECKLIST -->
+        <section id="sec-action" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <span>✅</span> Master Action Plan & Checklist Kesiapan Guru
+                </h2>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Sintesis aksi nyata (*takeaways*) pasca-workshop. Centang setiap poin yang telah atau sedang Anda laksanakan di sekolah untuk mengukur persentase kesiapan ekosistem digital sekolah Anda.
+                </p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex justify-between items-center text-sm font-bold">
+                    <span class="text-slate-900">Tingkat Kesiapan Implementasi Digital Sekolah:</span>
+                    <span id="progressPercent" class="text-brand-600 text-lg">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                    <div id="progressBar" class="bg-brand-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Action Checklist Category Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Instructional Actions -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2 text-brand-700">
+                        <span>🎯</span> 1. Aksi Instruksional Kelas
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menggunakan fitur Split Screen & Whiteboard IFP Hisense saat KBM harian.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menerapkan Prompt AI (Persona+Tugas+Format+Konteks) untuk menyusun bahan ajar.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Memanfaatkan Lab Maya / Gim Edukasi Ruang Murid minimal 1x seminggu.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menanamkan (embed) media Canva/PDF ke modul LMS kelas.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Managerial Actions -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2 text-blue-700">
+                        <span>🏫</span> 2. Aksi Manajerial Sekolah
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Membentuk Tim Pengelola TIK Sekolah & menyusun SOP penggunaan.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Melaksanakan pembersihan rutin layar IFP dengan microfiber non-alkohol.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menegakkan prosedur kebersihan akun (logout personal) pasca-KBM.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Mencatat aset BAST/BAPP & melabeli seluruh perangkat bantuan.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Community Actions -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2 text-purple-700">
+                        <span>🤝</span> 3. Aksi Komunitas & PASTI
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menuntaskan modul, pre-test, dan post-test di LMS PASTI.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menyelenggarakan In-House Training (IHT) atau pengimbasan di Kombel / MGMP.</span>
+                        </label>
+                        <label class="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-slate-50">
+                            <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-0.5 text-brand-600 rounded">
+                            <span>Menyusun Rencana Tindak Lanjut (RTL) pengimbasan terukur.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-4">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
+            <p>© 2025/2026 Program Digitalisasi Pembelajaran SMP - Kementerian Pendidikan Dasar dan Menengah</p>
+            <p class="font-medium text-slate-600">Pengembang: Ida Faridlah</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            const tabs = ['hardware', 'management', 'pedagogy', 'lms', 'cascade', 'action'];
+            tabs.forEach(id => {
+                const sec = document.getElementById(`sec-${id}`);
+                const btn = document.getElementById(`tab-${id}`);
+                if (id === tabId) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('active');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Trigger charts re-render when cascade tab opened
+            if (tabId === 'cascade' && !window.chartsInitialized) {
+                initCascadeCharts();
+                window.chartsInitialized = true;
+            }
+        }
+
+        // Hardware Data & Switcher Logic
+        const deviceData = {
+            ifp: {
+                title: 'Hisense 75WM61FE (Interactive Flat Panel 75")',
+                badge: 'Pusat Smart Classroom',
+                specs: [
+                    'Layar: 75 Inci Touchscreen Multi-touch',
+                    'Sistem Operasi: Android 13 Resmi',
+                    'Memori: RAM 16 GB | Penyimpanan 256 GB',
+                    'Prosesor: Octa-Core (AMLA311D2)',
+                    'Konektivitas: Wi-Fi 6 Ganda (Client + Hotspot), LAN, Bluetooth',
+                    'Daya & Garansi: 440 Watt | Garansi 3 Tahun On-site'
+                ],
+                features: 'Multi-touch, Side Button akses cepat, Tap 5 Jari soft control, Split Screen 2 aplikasi, Screen Share nirkabel (Hisense App/Miracast) & kabel (HDMI/USB Touch).'
+            },
+            laptop: {
+                title: 'Laptop Pendidikan Pengajar Setara Intel Core i5 / Ryzen 5',
+                badge: 'Perangkat Kerja Guru',
+                specs: [
+                    'Tipe/Merk: Zyrex Cruiser 22, DAC F1/F2, Mugen Ophir, Libera X10',
+                    'Prosesor: Intel Core i5 Gen 12 / AMD Ryzen 5 7000 Series',
+                    'Memori & Storage: RAM 8 GB DDR4 | SSD 256 GB',
+                    'Sistem Operasi: Windows 11 Resmi',
+                    'Garansi: 1 Tahun Resmi'
+                ],
+                features: 'Digunakan guru untuk penyusunan bahan ajar, pembuatan media interaktif Canva, olah data nilai, transmisi tampilan ke IFP, dan manajemen LMS.'
+            },
+            starlink: {
+                title: 'Internet Satelit Starlink V4 Gen 3',
+                badge: 'Konektivitas Satelit',
+                specs: [
+                    'Komponen Paket: Antena Dish V4, Router Gen 3, Power Unit',
+                    'Kabel: Kabel Utama Panjang 15 Meter',
+                    'Fokus Sasaran: Daerah minim sinyal / Wilayah 3T'
+                ],
+                features: 'Menyediakan koneksi internet broadband stabil berkecepatan tinggi langsung dari satelit untuk mendukung akses platform Ruang Murid & LMS.'
+            },
+            storage: {
+                title: 'Harddisk Eksternal Kapasitas 500 GB',
+                badge: 'Repositori Offline',
+                specs: [
+                    'Kapasitas: 500 GB',
+                    'Koneksi: High-Speed USB 3.0',
+                    'Garansi: 1 Tahun Resmi'
+                ],
+                features: 'Menyimpan cadangan bahan ajar digital, video pembelajaran interaktif, dokumen administrasi, dan repositori offline saat jaringan internet padam.'
+            }
+        };
+
+        function showDevice(key) {
+            const d = deviceData[key];
+            const detailBox = document.getElementById('deviceDetailBox');
+            
+            // Update Active Button Style
+            ['ifp', 'laptop', 'starlink', 'storage'].forEach(k => {
+                const btn = document.getElementById(`dev-${k}`);
+                if (k === key) {
+                    btn.className = 'w-full text-left p-3 rounded-lg border border-brand-500 bg-brand-50 text-slate-900 font-semibold flex items-center justify-between transition';
+                } else {
+                    btn.className = 'w-full text-left p-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-white text-slate-700 font-semibold flex items-center justify-between transition';
+                }
+            });
+
+            detailBox.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-slate-900 text-base">${d.title}</h3>
+                        <span class="text-xs bg-brand-100 text-brand-800 font-bold px-2.5 py-1 rounded-full">${d.badge}</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Spesifikasi Kunci:</h4>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                            ${d.specs.map(s => `<li class="bg-slate-50 p-2 rounded border border-slate-200 flex items-center gap-1.5"><span class="text-brand-600 font-bold">•</span> ${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Fitur & Fungsi Utama:</h4>
+                        <p class="text-xs text-slate-600 bg-emerald-50/50 p-3 rounded border border-emerald-100 leading-relaxed">${d.features}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 8 Steps Management Data
+        const stepsData = [
+            { num: 1, title: 'Inventarisasi', desc: 'Pendataan rinci perangkat (kode, nomor seri, kondisi), dokumentasi BAST/BAPP, labelisasi fisik, verifikasi Dapodik.' },
+            { num: 2, title: 'Kebijakan Penggunaan', desc: 'Pembentukan Tim Pengelola TIK, penyusunan SOP & Tata Tertib KBM, buku log kunjungan, dan jadwal pemakaian PID.' },
+            { num: 3, title: 'Pemeliharaan', desc: 'Pelaksanaan jadwal perawatan rutin berkala (harian, mingguan, bulanan) serta pencatatan problem logbook.' },
+            { num: 4, title: 'Penyimpanan & Pengamanan', desc: 'Pengelompokan perangkat, pengamanan fisik (teralis, CCTV, lock stand) dan teknis (password, enkripsi, backup).' },
+            { num: 5, title: 'Pelatihan & Kapasitas', desc: 'Diseminasi internal, In-House Training (IHT), workshop praktis Canva/LMS, dan pendampingan sebaya.' },
+            { num: 6, title: 'Penyusunan Bahan Ajar', desc: 'Pendataan ketersediaan bahan ajar digital (slide, video, modul) per mata pelajaran & rekap dalam cloud.' },
+            { num: 7, title: 'Evaluasi & Pelaporan', desc: 'Mengukur tingkat pemanfaatan, dampaknya terhadap literasi, numerasi, karakter siswa, serta penyusunan laporan.' },
+            { num: 8, title: 'Pendampingan', desc: 'Kolaborasi pengawasan berkelanjutan melibatkan BPMP, Dinas Pendidikan, Pengawas Sekolah, dan Kepala Sekolah.' }
+        ];
+
+        function initSteps() {
+            const btnContainer = document.getElementById('stepButtonsContainer');
+            btnContainer.innerHTML = stepsData.map((s, idx) => `
+                <button onclick="showStep(${idx})" id="stepBtn-${idx}" class="step-card p-2.5 rounded-lg border border-slate-200 text-center transition flex flex-col items-center justify-center space-y-1 bg-white">
+                    <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center" id="stepBadge-${idx}">${s.num}</span>
+                    <span class="text-[11px] font-semibold text-slate-800 line-clamp-1">${s.title}</span>
+                </button>
+            `).join('');
+            showStep(0);
+        }
+
+        function showStep(idx) {
+            stepsData.forEach((_, i) => {
+                const btn = document.getElementById(`stepBtn-${i}`);
+                const badge = document.getElementById(`stepBadge-${i}`);
+                if (i === idx) {
+                    btn.className = 'step-card active p-2.5 rounded-lg border text-center transition flex flex-col items-center justify-center space-y-1';
+                    badge.className = 'w-6 h-6 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center';
+                } else {
+                    btn.className = 'step-card p-2.5 rounded-lg border border-slate-200 text-center transition flex flex-col items-center justify-center space-y-1 bg-white';
+                    badge.className = 'w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center';
+                }
+            });
+
+            const s = stepsData[idx];
+            document.getElementById('stepDetailContent').innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-brand-600 text-white font-bold text-xs px-2.5 py-1 rounded">Langkah ${s.num}</span>
+                        <h4 class="font-bold text-slate-900 text-base">${s.title}</h4>
+                    </div>
+                    <p class="text-xs text-slate-700 leading-relaxed">${s.desc}</p>
+                </div>
+            `;
+        }
+
+        // LMS Data & Interactive Switcher Logic
+        const lmsPlatforms = {
+            gclass: {
+                name: 'Google Classroom',
+                colorClass: 'emerald',
+                title: 'Panduan Operasional & Integrasi Google Classroom',
+                desc: 'Google Classroom merupakan solusi pengelolaan kelas sederhana berbasis cloud yang langsung terintegrasi dengan Google Workspace for Education & Akun Belajar.id.',
+                steps: [
+                    { step: '1. Buat Kelas & Integrasi Belajar.id', text: 'Login menggunakan akun guru @belajar.id. Buat kelas baru per mata pelajaran dan bagikan Kode Kelas / Tautan Undangan ke siswa.' },
+                    { step: '2. Kelola Materi & Tugas Interaktif', text: 'Gunakan tab "Tugas Kelas" untuk mengorganisir modul berdasarkan Topik. Sisipkan video YouTube, slide Google Drive, atau tautan interaktif.' },
+                    { step: '3. Penilaian Otomatis & Rubrik', text: 'Buat Kuis via Google Form yang terintegrasi (auto-grading) dan lampirkan kriteria rubrik penilaian transparan untuk siswa.' },
+                    { step: '4. Tayangan Langsung di IFP Hisense', text: 'Buka Google Classroom dari browser IFP Hisense. Tampilkan materi langsung di layar interaktif untuk diskusi tatap muka.' }
+                ],
+                snippetTitle: 'Contoh Tautan Integrasi Media di Google Classroom:',
+                snippetCode: 'https://classroom.google.com/c/MTIzNDU2Nzg5?cjc=abc1234\n<!-- Catatan: Tautan materi Canva / Quizizz / Google Docs dapat dilampirkan langsung pada opsi "Tambah Lampiran" -->'
+            },
+            moodiy: {
+                name: 'Moodle / MooDIY Cloud',
+                colorClass: 'brand',
+                title: 'Alur Praktik Konfigurasi LMS MooDIY Mandiri (Materi 8)',
+                desc: 'MooDIY Cloud merupakan platform berbasis Moodle open-source yang kaya akan fitur pedagogis, analisis nilai, kuis adaptif, serta dukungan embed HTML media interaktif.',
+                steps: [
+                    { step: '1. Pendaftaran Subdomain', text: 'Daftar di moodiycloud.com (paket gratis 50 user, 1GB). Buat subdomain khusus sekolah Anda.' },
+                    { step: '2. Pengaturan Tema Visual', text: 'Akses Site Admin > Appearance > Themes. Pilih tema ramah pengguna seperti Boost, Academi, atau Moove.' },
+                    { step: '3. Pembuatan Kursus / Mapel', text: 'Masuk menu My Courses > Create Course. Isi nama mata pelajaran, nama singkat, kategori, dan periode aktif.' },
+                    { step: '4. Embed Media HTML Interaktif', text: 'Tambahkan aktivitas "Page", aktifkan mode HTML Source Code (<>), tempelkan iframe Canva/Google Drive.' },
+                    { step: '5. Evaluasi & Bank Soal', text: 'Buat modul Quiz, atur skor maksimal (100), masukkan soal pilihan ganda/esai, dan aktifkan fitur acak soal.' },
+                    { step: '6. Enrolment Massal Siswa', text: 'Unggah data siswa via file CSV (Users > Upload Users) lalu kaitkan siswa ke kelas sebagai Student.' }
+                ],
+                snippetTitle: 'Contoh Kode Embed Canva / PDF ke Modul LMS Moodle (Page HTML):',
+                snippetCode: '&lt;iframe loading="lazy" style="width:100%; height:450px; border:none;" src="https://www.canva.com/design/DAFxxx/view?embed" allowfullscreen&gt;&lt;/iframe&gt;'
+            },
+            canva: {
+                name: 'Canva LMS & Eskooly',
+                colorClass: 'blue',
+                title: 'Panduan Integrasi Canva LMS & Eskooly',
+                desc: 'Canva for Education tidak hanya berfungsi sebagai alat desain, tetapi juga sebagai ruang kelas visual interaktif tempat guru memberikan tugas kolaboratif secara real-time.',
+                steps: [
+                    { step: '1. Aktivasi Akun Canva Pendidikan', text: 'Masuk menggunakan Akun Belajar.id untuk membuka seluruh fitur premium Canva for Education secara gratis.' },
+                    { step: '2. Buat Tim Kelas & Undang Siswa', text: 'Buat "Ruang Kelas Baru" di Canva, lalu undang siswa menggunakan tautan atau kirim undangan otomatis via Google Classroom.' },
+                    { step: '3. Buat Presentasi & LKPD Interaktif', text: 'Gunakan template LKPD / Slide Pembelajaran Interaktif. Sisipkan elemen tanya jawab dan gim edukasi.' },
+                    { step: '4. Penugasan Kolaboratif & Feedback', text: 'Bagikan tugas dengan mode "Buat Salinan untuk Setiap Siswa". Berikan masukan langsung pada lembar kerja digital siswa.' }
+                ],
+                snippetTitle: 'Contoh Tautan Embed Presentasi Interaktif Canva:',
+                snippetCode: '&lt;div style="position: relative; width: 100%; height: 0; padding-top: 56.25%;"&gt;\n  &lt;iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none;" src="https://www.canva.com/design/DAFxxx/view?embed" allowfullscreen&gt;&lt;/iframe&gt;\n&lt;/div&gt;'
+            }
+        };
+
+        function selectLmsPlatform(key) {
+            // Update button styles
+            ['gclass', 'moodiy', 'canva'].forEach(k => {
+                const btn = document.getElementById(`lmsBtn-${k}`);
+                if (k === key) {
+                    btn.className = 'lms-card active cursor-pointer text-left p-4 rounded-xl border-2 border-brand-500 bg-brand-50/20 shadow-sm space-y-2 focus:outline-none';
+                } else {
+                    btn.className = 'lms-card cursor-pointer text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-brand-500 transition shadow-sm space-y-2 focus:outline-none';
+                }
+            });
+
+            // Render details
+            const lms = lmsPlatforms[key];
+            const container = document.getElementById('lmsDetailContainer');
+
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                            <span>⚙️</span> ${lms.title}
+                        </h3>
+                        <span class="text-xs font-semibold text-brand-700 bg-brand-100 px-3 py-1 rounded-full w-fit">
+                            Platform Terpilih: ${lms.name}
+                        </span>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 leading-relaxed">${lms.desc}</p>
+
+                    <!-- Steps Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs pt-2">
+                        ${lms.steps.map(s => `
+                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                                <div class="font-bold text-brand-700 text-sm">${s.step}</div>
+                                <p class="text-slate-700">${s.text}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Code Snippet Demo Box -->
+                    <div class="mt-4 p-4 bg-slate-900 rounded-lg text-slate-200 text-xs font-mono space-y-2">
+                        <div class="text-slate-400 text-[10px] uppercase font-sans">${lms.snippetTitle}</div>
+                        <p class="text-emerald-400 overflow-x-auto p-2 bg-slate-950 rounded leading-relaxed whitespace-pre-wrap">${lms.snippetCode}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // AI Prompt Generator Logic
+        function updatePrompt() {
+            const persona = document.getElementById('promptPersona').value;
+            const task = document.getElementById('promptTask').value;
+            const format = document.getElementById('promptFormat').value;
+            const context = document.getElementById('promptContext').value;
+
+            const fullPrompt = `"${persona}, ${task}. ${format}, ${context}"`;
+            document.getElementById('promptOutput').innerText = fullPrompt;
+        }
+
+        function copyGeneratedPrompt() {
+            const txt = document.getElementById('promptOutput').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                alert('Prompt berhasil disalin ke clipboard!');
+            });
+        }
+
+        // Action Checklist Progress Logic
+        function updateChecklistProgress() {
+            const items = document.querySelectorAll('.chk-item');
+            let checked = 0;
+            items.forEach(item => {
+                if (item.checked) checked++;
+            });
+            const pct = Math.round((checked / items.length) * 100);
+            document.getElementById('progressPercent').innerText = `${pct}%`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        // Chart.js Initializer
+        function initCascadeCharts() {
+            // Cascade Training Reach Bar Chart
+            const ctx1 = document.getElementById('cascadeChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['ToT Pusat (Level 1)', 'Bimtek Daerah (Level 2)'],
+                    datasets: [{
+                        label: 'Jumlah Peserta Terlatih',
+                        data: [200, 30840],
+                        backgroundColor: ['#0891b2', '#059669'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Target: ${context.raw.toLocaleString('id-ID')} Orang`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Skala Jumlah Peserta (Log)' }
+                        }
+                    }
+                }
+            });
+
+            // Tier Curriculum Doughnut Chart
+            const ctx2 = document.getElementById('tierChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Tier 1: Kebijakan & Smart Classroom (15%)',
+                        'Tier 2: Instalasi & Perangkat (25%)',
+                        'Tier 3: Platform, AI & Coding (35%)',
+                        'Tier 4: Tata Kelola & RTL (25%)'
+                    ],
+                    datasets: [{
+                        data: [15, 25, 35, 25],
+                        backgroundColor: ['#0284c7', '#0d9488', '#059669', '#d97706']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event Listeners Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            showDevice('ifp');
+            initSteps();
+            selectLmsPlatform('moodiy'); // Default select MooDIY
+
+            ['promptPersona', 'promptTask', 'promptFormat', 'promptContext'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updatePrompt);
+            });
+            updatePrompt();
+            updateChecklistProgress();
+        });
+    </script>
+</body>
+</html>
